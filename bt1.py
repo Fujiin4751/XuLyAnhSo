@@ -50,7 +50,7 @@ def equalize_histogram(gray: Matrix, hist: list[int]) -> Matrix:
     w = width_of(gray)
     total_pixels = h * w
 
-    # Bang tra cuu (lookup table) cho 256 muc xam, tinh tay bang for-loop
+    # Bang tra cuu cho 256 muc xam
     lookup_table = [0 for _ in range(GRAY_LEVELS)]
     running_sum = 0
     for level in range(GRAY_LEVELS):
@@ -72,27 +72,59 @@ def equalize_histogram(gray: Matrix, hist: list[int]) -> Matrix:
     return equalized
 
 
+def find_min_max(matrix: Matrix) -> tuple[int, int]:
+    """Tim gia tri nho nhat (r_min) va lon nhat (r_max) thuc te xuat hien trong anh."""
+    h = height_of(matrix)
+    w = width_of(matrix)
+ 
+    current_min = matrix[0][0]
+    current_max = matrix[0][0]
+ 
+    for y in range(h):
+        for x in range(w):
+            value = matrix[y][x]
+            if value < current_min:
+                current_min = value
+            if value > current_max:
+                current_max = value
+ 
+    return current_min, current_max
+ 
+ 
 def shrink_range(equalized: Matrix, low: int = 30, high: int = 120) -> Matrix:
     """
-    Hieu chinh thu hep dai gia tri cua anh H2 (dang 0..255) ve khoang [low, high]
-    bang phep bien doi tuyen tinh:
-        new = low + old * (high - low) / 255
+    Hieu chinh thu hep histogram:
+ 
+        s = [(s_max - s_min) / (r_max - r_min)] * (r - r_min) + s_min
+ 
+    Trong do:
+        r       : gia tri pixel dau vao (anh sau can bang H2)
+        r_min, r_max : gia tri NHO NHAT va LON NHAT THUC TE xuat hien trong anh H2
+                       (khong phai cap 0 va 255 co dinh)
+        s_min, s_max : khoang gia tri mong muon sau khi thu hep (low, high)
+        s       : gia tri pixel dau ra
     """
     h = height_of(equalized)
     w = width_of(equalized)
-    span = high - low
-
+ 
+    r_min, r_max = find_min_max(equalized)
+    s_min, s_max = low, high
+ 
+    # Truong hop dac biet: anh dong nhat (r_max == r_min), tranh chia cho 0
+    if r_max == r_min:
+        denom = 1
+    else:
+        denom = r_max - r_min
+ 
+    ratio = (s_max - s_min) / denom
+ 
     narrowed: Matrix = [[0 for _ in range(w)] for _ in range(h)]
     for y in range(h):
         for x in range(w):
-            old_value = equalized[y][x]
-            new_value = low + (old_value * span) / 255.0
-            if new_value < low:
-                new_value = low
-            if new_value > high:
-                new_value = high
-            narrowed[y][x] = round(new_value)
-
+            r = equalized[y][x]
+            s = ratio * (r - r_min) + s_min
+            narrowed[y][x] = round(s)
+ 
     return narrowed
 
 

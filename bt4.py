@@ -23,10 +23,6 @@ def process_one_image(image_path: Path, img_dir: Path) -> None:
     print(f"   -> Bai 3 (Local Binary Pattern)")
     bt3.process_into_dir(image_path, img_dir / "Bai3")
 
-    # Ghi lai ten file anh goc de doi chieu
-    note_path = img_dir / "_ten_anh_goc.txt"
-    note_path.write_text(image_path.name, encoding="utf-8")
-
 
 def main() -> None:
     if not bt1.INPUT_DIR.exists():
