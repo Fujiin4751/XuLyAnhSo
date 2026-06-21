@@ -79,7 +79,7 @@ def find_min_max(matrix: Matrix) -> tuple[int, int]:
  
     current_min = matrix[0][0]
     current_max = matrix[0][0]
- 
+                                     
     for y in range(h):
         for x in range(w):
             value = matrix[y][x]
@@ -96,13 +96,6 @@ def shrink_range(equalized: Matrix, low: int = 30, high: int = 120) -> Matrix:
     Hieu chinh thu hep histogram:
  
         s = [(s_max - s_min) / (r_max - r_min)] * (r - r_min) + s_min
- 
-    Trong do:
-        r       : gia tri pixel dau vao (anh sau can bang H2)
-        r_min, r_max : gia tri NHO NHAT va LON NHAT THUC TE xuat hien trong anh H2
-                       (khong phai cap 0 va 255 co dinh)
-        s_min, s_max : khoang gia tri mong muon sau khi thu hep (low, high)
-        s       : gia tri pixel dau ra
     """
     h = height_of(equalized)
     w = width_of(equalized)

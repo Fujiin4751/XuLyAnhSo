@@ -33,7 +33,7 @@ def load_rgb_pixels(image_path: Path):
     Mo anh va tra ve 3 ma tran R, G, B kieu list[list[int]].
     """
     pil_image = Image.open(image_path).convert("RGB")
-    rgb_array = np.asarray(pil_image)  # chi doc, khong tinh toan
+    rgb_array = np.asarray(pil_image) 
     h, w, _ = rgb_array.shape
 
     red = [[int(rgb_array[y, x, 0]) for x in range(w)] for y in range(h)]
@@ -46,7 +46,6 @@ def to_grayscale(red: Matrix, green: Matrix, blue: Matrix) -> Matrix:
     """
     Cong thuc chuyen anh mau sang anh xam theo chuan ITU-R BT.601:
         Gray = 0.299*R + 0.587*G + 0.114*B
-    Tinh tay tung pixel bang for-loop, khong vectorize.
     """
     h = height_of(red)
     w = width_of(red)
@@ -64,7 +63,7 @@ def to_grayscale(red: Matrix, green: Matrix, blue: Matrix) -> Matrix:
 
 
 def save_matrix_as_image(matrix: Matrix, path: Path) -> None:
-    """Ghi Matrix (gia tri 0-255) ra file anh xam. Chi dung PIL de xuat file."""
+    """Ghi Matrix (gia tri 0-255) ra file anh xam"""
     h = height_of(matrix)
     w = width_of(matrix)
     out_image = Image.new("L", (w, h))

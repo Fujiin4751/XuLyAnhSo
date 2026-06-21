@@ -46,7 +46,7 @@ def pad_with_zero(matrix: Matrix, pad: int) -> Matrix:
 
 def convolve(gray: Matrix, kernel: Matrix, padding: int, stride: int = 1) -> Matrix:
     """
-    Phep tich chap thu cong: truot kernel tren anh da padding, tai moi
+    Phep tich chap: truot kernel tren anh da padding, tai moi
     vi tri nhan tung phan tu kernel voi pixel tuong ung roi cong lai.
     """
     k_h = len(kernel)
