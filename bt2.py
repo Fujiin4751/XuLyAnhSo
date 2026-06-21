@@ -1,27 +1,3 @@
-"""
-bt2.py
-------
-Cau 2: Anh xam -> Convolution (box filter) -> Median filter -> Threshold I6.
-
-  I1 = conv(gray, box 3x3, padding=1, stride=1)
-  I2 = conv(gray, box 5x5, padding=2, stride=1)
-  I3 = conv(gray, box 7x7, padding=3, stride=2)
-  I4 = median_filter(I3, 3x3)
-  I5 = median_filter(I1, 5x5)
-  I6(x,y) = 0           neu I4(x,y) > I5(x,y)
-          = I5(x,y)     nguoc lai
-  (I4, I5 duoc dem padding cho cung kich thuoc truoc khi so sanh)
-
-Ca 3 kernel (3x3, 5x5, 7x7) deu la BOX FILTER (kernel trung binh, moi
-phan tu = 1/(k*k)) de nhat quan giua 3 kich thuoc, dung yeu cau de bai
-(de bai khong chi dinh gia tri kernel cu the).
-
-Toan bo convolution + median deu la for-loop Python thuan tren
-Matrix = list[list[float]], KHONG dung numpy, KHONG dung
-sliding_window_view / cv2.filter2D / scipy.ndimage hay bat ky ham
-xu ly anh co san nao.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -103,7 +79,7 @@ def median_filter(source: Matrix, neighborhood: int) -> Matrix:
     """
     Loc trung vi: tai moi pixel, lay tat ca gia tri trong vung lan can
     neighborhood x neighborhood (co padding 0 o bien), sap xep va chon
-    gia tri o giua (median). Kich thuoc dau ra giu nguyen kich thuoc dau vao.
+    gia tri o giua. Kich thuoc dau ra giu nguyen kich thuoc dau vao.
     """
     pad = neighborhood // 2
     padded = pad_with_zero(source, pad)
@@ -128,7 +104,7 @@ def median_filter(source: Matrix, neighborhood: int) -> Matrix:
 
 def pad_to_match(a: Matrix, b: Matrix) -> tuple[Matrix, Matrix]:
     """
-    Neu I4 va I5 khac kich thuoc, them padding 0 (can giua) de hai anh
+    Neu I4 va I5 khac kich thuoc, them padding 0 de hai anh
     co cung kich thuoc truoc khi so sanh tung pixel.
     """
     target_h = max(height_of(a), height_of(b))
@@ -167,11 +143,6 @@ def build_i6(i4: Matrix, i5: Matrix) -> Matrix:
 
 
 def process_into_dir(image_path: Path, save_dir: Path) -> None:
-    """
-    Xu ly 1 anh va luu KET QUA TRUC TIEP vao save_dir (khong tu them ten anh
-    vao duong dan). Dung khi noi goi (vi du bt4.py) da tu quyet dinh cau truc
-    thu muc va chi muon ham nay ghi file vao dung cho do.
-    """
     red, green, blue = load_rgb_pixels(image_path)
     gray = to_grayscale(red, green, blue)
 
@@ -198,7 +169,6 @@ def process_into_dir(image_path: Path, save_dir: Path) -> None:
 
 
 def run_on_one_image(image_path: Path, output_dir: Path) -> None:
-    """Dung khi chay rieng bt2.py: tu tao thu muc con theo ten file anh."""
     save_dir = output_dir / image_path.stem
     process_into_dir(image_path, save_dir)
     print(f"  -> {image_path.name} done")

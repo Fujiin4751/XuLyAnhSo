@@ -1,13 +1,3 @@
-"""
-bt1.py
-------
-Cau 1: Anh xam -> Histogram (H1) -> Can bang histogram (H2)
-       -> Hieu chinh thu hep H2 ve khoang (30, 120).
-
-Toan bo tinh toan dung for-loop Python thuan tren Matrix = list[list[int]].
-Khong dung ham histogram/equalizeHist co san cua bat ky thu vien nao.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -107,7 +97,7 @@ def shrink_range(equalized: Matrix, low: int = 30, high: int = 120) -> Matrix:
 
 
 def draw_histogram_chart(hist: list[int], path: Path, title: str) -> None:
-    """Ve histogram thanh anh PNG don gian de bo vao bao cao (chi dung de minh hoa, khong phai thuat toan can cham diem)."""
+    """Ve histogram """
     canvas_w, canvas_h = 520, 300
     pad_l, pad_r, pad_t, pad_b = 46, 14, 30, 32
 
@@ -138,11 +128,6 @@ def draw_histogram_chart(hist: list[int], path: Path, title: str) -> None:
 
 
 def process_into_dir(image_path: Path, save_dir: Path) -> None:
-    """
-    Xu ly 1 anh va luu KET QUA TRUC TIEP vao save_dir (khong tu them ten anh
-    vao duong dan). Dung khi noi goi (vi du bt4.py) da tu quyet dinh cau truc
-    thu muc va chi muon ham nay ghi file vao dung cho do.
-    """
     red, green, blue = load_rgb_pixels(image_path)
     gray = to_grayscale(red, green, blue)
 

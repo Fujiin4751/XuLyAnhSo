@@ -1,19 +1,3 @@
-"""
-imgcore.py
-----------
-Cac ham dung chung cho bt1, bt2, bt3, bt4.
-
-QUY UOC QUAN TRONG:
-- Anh xu ly tay duoc luu duoi dang Matrix = list[list[int]] (hoac float),
-  TUYET DOI khong dung numpy array trong qua trinh tinh toan (convolution,
-  median, LBP, histogram, equalize...). numpy/PIL CHI duoc dung de:
-    + Mo file anh tu disk (PIL.Image.open)
-    + Doc gia tri pixel RGB ban dau (numpy.asarray, chi de doc, khong tinh toan)
-    + Ghi Matrix ra file anh (PIL.Image.putpixel)
-  Tat ca thuat toan (gray hoa, histogram, conv, median, LBP...) phai la
-  for-loop Python thuan, khong goi ham xu ly anh co san nao ca.
-"""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -21,7 +5,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-Matrix = list  # list[list[int]] hoac list[list[float]], dung de chu thich cho de doc
+Matrix = list  # list[list[int]] hoac list[list[float]]
 
 
 def height_of(matrix: Matrix) -> int:
@@ -47,8 +31,6 @@ def clamp_byte(value: float) -> int:
 def load_rgb_pixels(image_path: Path):
     """
     Mo anh va tra ve 3 ma tran R, G, B kieu list[list[int]].
-    Day la buoc duy nhat cho phep dung numpy.asarray, chi de DOC pixel
-    tu file, khong thuc hien bat ky phep tinh xu ly anh nao ca.
     """
     pil_image = Image.open(image_path).convert("RGB")
     rgb_array = np.asarray(pil_image)  # chi doc, khong tinh toan

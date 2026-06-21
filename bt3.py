@@ -1,29 +1,3 @@
-"""
-bt3.py
-------
-Cau 3: Anh xam -> Local Binary Pattern (LBP) voi nhieu cau hinh (P, R).
-
-  (P=8,  R=1), (P=8,  R=2)
-  (P=16, R=2), (P=16, R=3)
-  (P=24, R=3)
-
-Voi mot pixel trung tam, lay P diem lan can nam tren duong tron ban kinh R
-(toa do thuc, dung noi suy song tuyen tinh - bilinear - de lay gia tri xam
-tai diem khong nam dung vao luoi pixel). So sanh tung diem lan can voi
-pixel trung tam de tao 1 bit (1 neu lan can >= trung tam, nguoc lai 0),
-ghep P bit thanh 1 chuoi nhi phan.
-
-  - Neu P = 8  -> chuoi co dung 8 bit -> doi thang sang so thap phan (0..255).
-  - Neu P = 16 -> tach chuoi 16 bit thanh 2 doan 8-bit, doi moi doan sang
-    so thap phan, LAY GIA TRI LON HON trong 2 doan lam gia tri pixel.
-  - Neu P = 24 -> tach chuoi 24 bit thanh 3 doan 8-bit, doi moi doan sang
-    so thap phan, LAY GIA TRI LON NHAT trong 3 doan lam gia tri pixel.
-
-Toan bo thuat toan (lay toa do lan can, noi suy bilinear, so sanh bit,
-ghep chuoi nhi phan) la for-loop Python thuan tren Matrix = list[list[int]].
-Khong dung skimage.feature.local_binary_pattern hay bat ky ham LBP co san.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -45,7 +19,7 @@ INPUT_DIR = Path("images/processed")
 OUTPUT_DIR = Path("images/result_bt3")
 DEFAULT_IMAGE_NAME = "Img_01.jpg"
 
-# Danh sach cau hinh (so diem lan can P, ban kinh R) can xu ly theo de bai
+# Danh sach cau hinh (so diem lan can P, ban kinh R)
 LBP_CONFIGS = [
     (8, 1),
     (8, 2),
