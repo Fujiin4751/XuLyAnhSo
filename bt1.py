@@ -127,6 +127,12 @@ def shrink_range(equalized: Matrix, low: int = 30, high: int = 120) -> Matrix:
  
     return narrowed
 
+def save_histogram_csv(hist: list[int], path: Path) -> None:
+    """Ghi histogram ra file CSV voi 2 cot: gray_value, count."""
+    lines = ["gray_value,count\n"]
+    for gray_value, count in enumerate(hist):
+        lines.append(f"{gray_value},{count}\n")
+    path.write_text("".join(lines), encoding="utf-8")
 
 def draw_histogram_chart(hist: list[int], path: Path, title: str) -> None:
     """Ve histogram """
@@ -167,15 +173,19 @@ def process_into_dir(image_path: Path, save_dir: Path) -> None:
     equalized = equalize_histogram(gray, h1)
     h2 = build_histogram(equalized)
     narrowed = shrink_range(equalized, low=30, high=120)
+    h3 = build_histogram(narrowed)
 
     save_dir.mkdir(parents=True, exist_ok=True)
 
     save_matrix_as_image(gray, save_dir / "00_gray.jpg")
     draw_histogram_chart(h1, save_dir / "01_H1_histogram.jpg", "H1 - Histogram anh xam")
+    save_histogram_csv(h1, save_dir / "01_H1_histogram.csv")
     save_matrix_as_image(equalized, save_dir / "02_H2_equalized.jpg")
     draw_histogram_chart(h2, save_dir / "03_H2_histogram.jpg", "H2 - Histogram sau can bang")
+    save_histogram_csv(h2, save_dir / "03_H2_histogram.csv")
     save_matrix_as_image(narrowed, save_dir / "04_H2_narrow_30_120.jpg")
-
+    draw_histogram_chart(h3, save_dir / "05_H3_narrow_histogram.jpg", "H3 - Histogram sau thu hep [30,120]")
+    save_histogram_csv(h3, save_dir / "05_H3_narrow_histogram.csv")
 
 def run_on_one_image(image_path: Path, output_dir: Path) -> None:
     """Dung khi chay rieng bt1.py: tu tao thu muc con theo ten file anh."""
