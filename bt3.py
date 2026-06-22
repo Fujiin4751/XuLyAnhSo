@@ -14,6 +14,9 @@ from imgcore import (
     save_matrix_as_image,
     list_image_files,
 )
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 INPUT_DIR = Path("images/processed")
 OUTPUT_DIR = Path("images/result_bt3")
@@ -142,12 +145,37 @@ def process_into_dir(image_path: Path, save_dir: Path) -> None:
     save_dir.mkdir(parents=True, exist_ok=True)
     save_matrix_as_image(gray, save_dir / "00_gray.jpg")
 
+    lbp_results = []
     for num_points, radius in LBP_CONFIGS:
         lbp_result = lbp_transform(gray, num_points, radius)
         filename = f"LBP_P{num_points}_R{radius}.jpg"
         save_matrix_as_image(lbp_result, save_dir / filename)
+        lbp_results.append((num_points, radius, lbp_result)) 
         print(f"     LBP P={num_points} R={radius} done")
+    draw_dashboard(gray, lbp_results, save_dir / "99_dashboard.png")
 
+def draw_dashboard(gray: Matrix, lbp_results: list[tuple[int, int, Matrix]], save_path: Path) -> None:
+    """
+    Ve dashboard tong hop cho bai 3 
+    """
+    fig, axes = plt.subplots(2, 3, figsize=(13, 8.5))
+ 
+    axes[0, 0].imshow(gray, cmap="gray", vmin=0, vmax=255)
+    axes[0, 0].set_title("Anh xam")
+    axes[0, 0].axis("off")
+ 
+    # 5 ket qua LBP duoc xep vao 5 o con lai theo thu tu doc (row-major),
+    # bat dau tu axes[0,1]
+    remaining_axes = [axes[0, 1], axes[0, 2], axes[1, 0], axes[1, 1], axes[1, 2]]
+ 
+    for ax, (num_points, radius, lbp_result) in zip(remaining_axes, lbp_results):
+        ax.imshow(lbp_result, cmap="gray", vmin=0, vmax=255)
+        ax.set_title(f"LBP P={num_points}, R={radius}")
+        ax.axis("off")
+ 
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=130)
+    plt.close(fig)
 
 def run_on_one_image(image_path: Path, output_dir: Path) -> None:
     save_dir = output_dir / image_path.stem

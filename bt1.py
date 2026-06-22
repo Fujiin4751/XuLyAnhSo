@@ -5,6 +5,9 @@ import shutil
 from pathlib import Path
 
 from PIL import Image, ImageDraw
+import matplotlib
+matplotlib.use("Agg")  
+import matplotlib.pyplot as plt
 
 from imgcore import (
     Matrix,
@@ -13,6 +16,7 @@ from imgcore import (
     load_rgb_pixels,
     to_grayscale,
     save_matrix_as_image,
+    combine_rgb,
     list_image_files,
 )
 
@@ -180,6 +184,71 @@ def process_into_dir(image_path: Path, save_dir: Path) -> None:
     draw_histogram_chart(h3, save_dir / "05_H3_narrow_histogram.jpg", "H3 - Histogram sau thu hep [30,120]")
     save_histogram_csv(h3, save_dir / "05_H3_narrow_histogram.csv")
 
+    color_rgb = combine_rgb(red, green, blue)
+    draw_dashboard(color_rgb, gray, equalized, narrowed, h1, h2, h3, save_dir / "99_dashboard.png")
+
+def draw_dashboard(
+    color_rgb,
+    gray: Matrix,
+    equalized: Matrix,
+    narrowed: Matrix,
+    h1: list[int],
+    h2: list[int],
+    h3: list[int],
+    save_path: Path,
+) -> None:
+    """
+    Ve dashboard tong hop cho bai 1 (giong layout anh mau):
+        Hang 1: Anh mau goc | Anh xam | Anh sau can bang Histogram | Anh thu hep [30,120]
+        Hang 2: H1 - Histogram anh xam | H2 - Histogram can bang | H3 - Histogram thu hep
+    Day chi la BUOC HIEN THI ket qua da tinh san bang for-loop tay; matplotlib
+    khong tham gia vao bat ky phep tinh xu ly anh nao.
+    """
+    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+ 
+    # ---- Hang 1: 4 anh ----
+    axes[0, 0].imshow(color_rgb)
+    axes[0, 0].set_title("Anh mau goc")
+    axes[0, 0].axis("off")
+ 
+    axes[0, 1].imshow(gray, cmap="gray", vmin=0, vmax=255)
+    axes[0, 1].set_title("Anh xam")
+    axes[0, 1].axis("off")
+ 
+    axes[0, 2].imshow(equalized, cmap="gray", vmin=0, vmax=255)
+    axes[0, 2].set_title("Anh sau can bang Histogram")
+    axes[0, 2].axis("off")
+ 
+    axes[0, 3].imshow(narrowed, cmap="gray", vmin=0, vmax=255)
+    axes[0, 3].set_title("Anh thu hep [30, 120]")
+    axes[0, 3].axis("off")
+ 
+    # ---- Hang 2: 3 histogram, o con lai an di ----
+    levels = list(range(GRAY_LEVELS))
+ 
+    axes[1, 0].bar(levels, h1, width=1.0, color="tab:blue")
+    axes[1, 0].set_title("H1 - Histogram anh xam")
+    axes[1, 0].set_xlabel("Muc xam")
+    axes[1, 0].set_ylabel("So pixel")
+    axes[1, 0].set_xlim(0, 255)
+ 
+    axes[1, 1].bar(levels, h2, width=1.0, color="tab:blue")
+    axes[1, 1].set_title("H2 - Histogram can bang")
+    axes[1, 1].set_xlabel("Muc xam")
+    axes[1, 1].set_xlim(0, 255)
+ 
+    axes[1, 2].bar(levels, h3, width=1.0, color="tab:blue")
+    axes[1, 2].set_title("H3 - Histogram thu hep [30,120]")
+    axes[1, 2].set_xlabel("Muc xam")
+    axes[1, 2].axvline(30, color="tab:blue", linestyle="--", linewidth=1)
+    axes[1, 2].axvline(120, color="tab:blue", linestyle="--", linewidth=1)
+    axes[1, 2].set_xlim(0, 255)
+ 
+    axes[1, 3].axis("off")  # o trong, khong dung den
+ 
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=130)
+    plt.close(fig)
 def run_on_one_image(image_path: Path, output_dir: Path) -> None:
     """Dung khi chay rieng bt1.py: tu tao thu muc con theo ten file anh."""
     save_dir = output_dir / image_path.stem

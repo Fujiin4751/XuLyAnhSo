@@ -14,6 +14,9 @@ from imgcore import (
     save_matrix_as_image,
     list_image_files,
 )
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 INPUT_DIR = Path("images/processed")
 OUTPUT_DIR = Path("images/result_bt2")
@@ -167,6 +170,61 @@ def process_into_dir(image_path: Path, save_dir: Path) -> None:
     save_matrix_as_image(i5, save_dir / "05_I5_median5x5_of_I1.jpg")
     save_matrix_as_image(i6, save_dir / "06_I6_threshold.jpg")
 
+    draw_dashboard(gray, i1, i2, i3, i4, i5, i6, save_dir / "99_dashboard.png")
+
+def draw_dashboard(
+    gray: Matrix,
+    i1: Matrix,
+    i2: Matrix,
+    i3: Matrix,
+    i4: Matrix,
+    i5: Matrix,
+    i6: Matrix,
+    save_path: Path,
+) -> None:
+    """
+    Ve dashboard tong hop cho bai 2 (giong layout anh mau):
+        Hang 1: Anh xam goc (I) | I1 - Kernel 3x3 | I2 - Kernel 5x5 | I3 - Kernel 7x7
+        Hang 2: I4 - Median(I3) | I5 - Median(I1) | I6 - Nguong tu I4,I5
+    Day chi la BUOC HIEN THI ket qua da tinh san bang for-loop tay; matplotlib
+    khong tham gia vao bat ky phep tinh convolution/median/threshold nao.
+    """
+    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+ 
+    axes[0, 0].imshow(gray, cmap="gray", vmin=0, vmax=255)
+    axes[0, 0].set_title("Anh xam goc (I)")
+    axes[0, 0].axis("off")
+ 
+    axes[0, 1].imshow(i1, cmap="gray", vmin=0, vmax=255)
+    axes[0, 1].set_title("I1 - Kernel 3x3, pad=1")
+    axes[0, 1].axis("off")
+ 
+    axes[0, 2].imshow(i2, cmap="gray", vmin=0, vmax=255)
+    axes[0, 2].set_title("I2 - Kernel 5x5, pad=2")
+    axes[0, 2].axis("off")
+ 
+    axes[0, 3].imshow(i3, cmap="gray", vmin=0, vmax=255)
+    axes[0, 3].set_title("I3 - Kernel 7x7, pad=3, stride=2")
+    axes[0, 3].axis("off")
+ 
+    axes[1, 0].imshow(i4, cmap="gray", vmin=0, vmax=255)
+    axes[1, 0].set_title("I4 - Median(I3), 3x3")
+    axes[1, 0].axis("off")
+ 
+    axes[1, 1].imshow(i5, cmap="gray", vmin=0, vmax=255)
+    axes[1, 1].set_title("I5 - Median(I1), 5x5")
+    axes[1, 1].axis("off")
+ 
+    axes[1, 2].imshow(i6, cmap="gray", vmin=0, vmax=255)
+    axes[1, 2].set_title("I6 - Nguong tu I4, I5")
+    axes[1, 2].axis("off")
+ 
+    axes[1, 3].axis("off")  # o trong, khong dung den
+ 
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=130)
+    plt.close(fig)
+ 
 
 def run_on_one_image(image_path: Path, output_dir: Path) -> None:
     save_dir = output_dir / image_path.stem

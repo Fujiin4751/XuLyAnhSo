@@ -78,6 +78,18 @@ def save_matrix_as_image(matrix: Matrix, path: Path) -> None:
 def copy_matrix(matrix: Matrix) -> Matrix:
     return [row[:] for row in matrix]
 
+def combine_rgb(red: Matrix, green: Matrix, blue: Matrix):
+    """
+    Ghep 3 Matrix R, G, B (tung kenh rieng) thanh 1 cau truc anh mau
+    dang list[list[list[int]]] de hien thi bang
+    matplotlib.imshow. 
+    """
+    h = height_of(red)
+    w = width_of(red)
+    return [
+        [[red[y][x], green[y][x], blue[y][x]] for x in range(w)]
+        for y in range(h)
+    ]
 
 def list_image_files(folder: Path):
     extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
